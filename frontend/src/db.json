@@ -1,0 +1,34 @@
+{
+  "cartproducts": [
+    {
+      "id": "c48e",
+      "productid": 7,
+      "title": "White Gold Plated Princess",
+      "price": 9.99,
+      "image": "https://fakestoreapi.com/img/71YAIFU48IL._AC_UL640_QL65_ML3_.jpg",
+      "totalprice": 39.96,
+      "quantity": 4,
+      "category": "jewelery"
+    },
+    {
+      "id": "38c0",
+      "productid": 17,
+      "title": "Rain Jacket Women Windbreaker Striped Climbing Raincoats",
+      "price": 39.99,
+      "image": "https://fakestoreapi.com/img/71HblAHs5xL._AC_UY879_-2.jpg",
+      "totalprice": 79.98,
+      "quantity": 2,
+      "category": "women's clothing"
+    },
+    {
+      "id": "4c39",
+      "productid": 7,
+      "title": "White Gold Plated Princess",
+      "price": 9.99,
+      "image": "https://fakestoreapi.com/img/71YAIFU48IL._AC_UL640_QL65_ML3_.jpg",
+      "totalprice": 19.98,
+      "quantity": 2,
+      "category": "jewelery"
+    }
+  ]
+}
