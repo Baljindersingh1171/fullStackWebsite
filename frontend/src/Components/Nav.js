@@ -6,6 +6,7 @@ import Searchbar from "./Searchbar";
 import { useContext } from "react";
 import { CartBadgeContext } from "../Context/CartBadge";
 import { Filterdatacontext } from "../Context/FilteredData";
+import { ProfileContext } from "../Context/UserProfile";
 import { LoginContext } from "../Context/Login";
 import { FaFilter } from "react-icons/fa";
 import Home from "./Home";
@@ -13,6 +14,10 @@ import { getProducts, logout } from "../apis/apis";
 import Cookies from "js-cookie";
 import Buttons from "./Buttons";
 import { FaUser } from "react-icons/fa";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
+import Profile from "./Profile";
+import { getProfile } from "../apis/apis";
 export default function Nav({
   isVisible,
   setIsVisible,
@@ -23,15 +28,19 @@ export default function Nav({
 }) {
   const navigate = useNavigate();
   const badge = useContext(CartBadgeContext);
-  const userlogin = useContext(LoginContext);
   const cartBadge = badge.cartBadge;
+  const image = useContext(ProfileContext);
+  console.log("image context", image);
+
   console.log("isVisible", isVisible);
   const data = useContext(Filterdatacontext);
   const filteredData = data.filteredData;
   console.log("filtered data", filteredData);
 
   const [allproducts, setAllProducts] = useState([]);
+  const [imageUrl, setImageUrl] = useState("");
   const accessToken = Cookies.get("accessToken");
+
   // console.log("accessToken", accessToken);
 
   //
@@ -53,6 +62,21 @@ export default function Nav({
   useEffect(() => {
     getAllProducts();
   }, []);
+  useEffect(() => {
+    const getimage = async () => {
+      const imageData = await getProfile(image.imageName);
+      // setUserProfile(false);
+      if (imageData) {
+        const Url = URL.createObjectURL(imageData.data);
+        console.log("URL", Url);
+        setImageUrl(Url);
+        console.log("hello");
+      }
+
+      console.log("imageData", imageData);
+    };
+    getimage();
+  }, [image.imageName]);
 
   const getAllProducts = async () => {
     const result = await getProducts();
@@ -141,6 +165,7 @@ export default function Nav({
             cursor="pointer"
             onClick={handleFilterClick}
           />
+
           {isVisible && (
             <div className="absolute top-5 right-0 h-[120px] w-[200px] bg-white border-[1px] border-black flex flex-col items-center ">
               <div className="flex items-center gap-[15px] m-[10px] ">
@@ -178,20 +203,35 @@ export default function Nav({
         </Link>
         {accessToken && (
           <div className="relative ">
-            <FaUser
-              color="white"
-              size="35px"
-              cursor="pointer"
-              onClick={handleUserClick}
-            />
+            {image.imageName.length > 0 ? (
+              <img
+                className="h-[35px] w-[35px] rounded-[100px]"
+                src={imageUrl}
+                onClick={handleUserClick}
+              />
+            ) : (
+              <FaUser
+                color="white"
+                size="35px"
+                cursor="pointer"
+                onClick={handleUserClick}
+              />
+            )}
+
             {userProfile && (
               <div className="absolute top-10 right-0 h-[120px] w-[200px] bg-white border-[1px] border-black">
-                <button
-                  className="bg-gray-400 text-white font-bold w-full border-[1px] border-black"
-                  onClick={() => handleClick()}
-                >
+                <button className="bg-gray-400 text-white font-bold w-full border-[1px] border-black">
                   Your Orders
                 </button>
+                <div className="bg-gray-400 text-white font-bold w-full border-[1px] border-black flex items-center justify-center">
+                  <Popup
+                    trigger={<button>Edit Profile</button>}
+                    position="left center"
+                  >
+                    <Profile setUserProfile={setUserProfile} />
+                  </Popup>
+                </div>
+
                 <button
                   className="bg-gray-400 text-white font-bold w-full  border-[1px] border-black"
                   onClick={() => handleClick()}

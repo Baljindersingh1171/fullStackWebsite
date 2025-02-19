@@ -6,14 +6,15 @@ const {
   getUser,
   checkUser,
   logout,
-  resetPassword
+  resetPassword,
 } = require("../controllers/user");
+const emailVerification = require("../middlewares/verification");
 const router = express.Router();
 router.get("/", handleGetAllUsers);
 router.post("/signup", registerUser);
 router.post("/login", checkUser);
 router.get("/logout", logout);
-router.post("/resetpassword",resetPassword);
+router.post("/resetpassword", emailVerification, resetPassword);
 // router.get("/cart", authenticateUser, (req, res) => {
 //   const { userId, role } = req.userInfo;
 

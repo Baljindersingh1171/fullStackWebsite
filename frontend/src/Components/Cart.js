@@ -21,7 +21,7 @@ export default function Cart() {
   const display = async () => {
     const result = await getCartProducts();
     console.log("result in cart", result);
-    // hello world
+
     const totalCartItems = result.data.reduce(
       (acc, currentvalue) => acc + currentvalue.quantity,
       0

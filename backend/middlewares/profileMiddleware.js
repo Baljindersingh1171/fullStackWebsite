@@ -1,17 +1,14 @@
 const multer = require("multer");
-// const upload = multer({ dest: "uploads/" });
+console.log("profile middleware");
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
 
-const profile = (req, res, next) => {
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      return cb(null, "../uploads");
-    },
-    filename: function (req, file, cb) {
-      return cb(null, `${Date.now()}_${file.originalname}`);
-    },
-  });
-  const upload = multer({ storage });
-  upload.single("file");
-  next();
-};
-module.exports = profile;
+const upload = multer({ storage });
+
+module.exports = upload;

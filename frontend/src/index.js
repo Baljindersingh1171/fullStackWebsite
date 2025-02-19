@@ -7,20 +7,23 @@ import { CartBadgeProvider } from "./Context/CartBadge";
 import { SearchedProvider } from "./Context/SearchedProduct";
 import { CartIdProvider } from "./Context/CartId";
 import { AuthProvider } from "./Context/Login";
+import { ProfileProvider } from "./Context/UserProfile";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <>
     <AuthProvider>
-      <CartIdProvider>
-        <CartBadgeProvider>
-          <Filterdataprovider>
-            <SearchedProvider>
-              <App />
-            </SearchedProvider>
-          </Filterdataprovider>
-        </CartBadgeProvider>
-      </CartIdProvider>
+      <ProfileProvider>
+        <CartIdProvider>
+          <CartBadgeProvider>
+            <Filterdataprovider>
+              <SearchedProvider>
+                <App />
+              </SearchedProvider>
+            </Filterdataprovider>
+          </CartBadgeProvider>
+        </CartIdProvider>
+      </ProfileProvider>
     </AuthProvider>
   </>
 );

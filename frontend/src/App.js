@@ -17,7 +17,7 @@ import { getCartProducts } from "./apis/apis";
 import { LoginContext } from "./Context/Login";
 
 import { CartBadgeContext } from "./Context/CartBadge";
-import Uploadprofile from "./Components/Profile";
+
 function App() {
   const mensClothCategory = "men's clothing";
   const womenCLothCategory = "women's clothing";
@@ -58,7 +58,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
           <Route path="/Addtocart" element={<Addtocart />} />
-          <Route path="/uploadprofile" element={<Uploadprofile />} />
+
           <Route
             path="/Mens"
             element={

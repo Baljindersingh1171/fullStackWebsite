@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
-
+require("dotenv").config();
 const authenticateUser = (req, res, next) => {
+  console.log("authorization");
   const token = req?.cookies?.accessToken;
-  console.log("headers", req.headers);
-  console.log("cookies", req.cookies);
-
   // const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
     return res.status(401).json({
@@ -13,7 +11,7 @@ const authenticateUser = (req, res, next) => {
     });
   }
   try {
-    const decodedToken = jwt.verify(token, "hello#232$$ded");
+    const decodedToken = jwt.verify(token, process.env.Unique_Key);
     console.log("decodedtoken", decodedToken);
     req.userInfo = decodedToken;
     next();

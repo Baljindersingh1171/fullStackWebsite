@@ -158,8 +158,27 @@ export const updateCartData = async (quantity, id, totalprice) => {
     throw err;
   }
 };
-export const uploadProfile = (formData) => {
+export const uploadProfile = async (formData) => {
   try {
-    axios.post(`/api/user/profile`, { formData });
+    const result = await axios.post(`/api/user/profile`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return result;
+  } catch (err) {}
+};
+export const getProfile = async (profilename) => {
+  try {
+    const response = await axios.get(`/api/user/profile/${profilename}`, {
+      responseType: "blob",
+    });
+    console.log("image", response);
+    return response;
+  } catch (err) {}
+};
+export const resetPassword = (formData) => {
+  try {
+    axios.post(`/api/user/resetpassword`, formData);
   } catch (err) {}
 };

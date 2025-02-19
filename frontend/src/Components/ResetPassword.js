@@ -5,27 +5,36 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 
 import { toast } from "react-toastify";
+import { resetPassword } from "../apis/apis";
 export default function ResetPassword() {
-  const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const navigate = useNavigate();
 
   function handleChange(e) {
-    setEmail(e.target.value);
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (e.target.name === "back") {
       navigate("/");
-    } else if (email === "") {
-      alert("Email is required");
+    } else if (formData.email === "" || formData.password === "") {
+      alert("All fields required");
     } else {
       try {
-        await sendPasswordResetEmail(auth, email);
+        // await sendPasswordResetEmail(auth, email);'
+        await resetPassword(formData);
         toast.success("Password is reset successfully");
-        setEmail("");
+        // setEmail("");
         navigate("/login");
       } catch (err) {
         toast.error(err);
@@ -42,8 +51,16 @@ export default function ResetPassword() {
           onChange={handleChange}
           className="inputs"
           placeholder="Email"
-          value={email}
+          value={formData.email}
           name="email"
+        />
+        <input
+          type="password"
+          onChange={handleChange}
+          className="inputs"
+          placeholder="new password"
+          value={formData.password}
+          name="password"
         />
         <div style={{ display: "flex", gap: "20px" }}>
           <Buttons
