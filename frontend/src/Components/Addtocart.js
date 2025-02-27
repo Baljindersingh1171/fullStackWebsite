@@ -47,7 +47,7 @@ export default function Addtocart() {
   const handleClick = async () => {
     if (accessToken) {
       try {
-        await addToCart(
+        const result = await addToCart(
           product.id,
           product.title,
           product.price,
@@ -55,12 +55,20 @@ export default function Addtocart() {
           quantity,
           product.category
         );
+        console.log("result of add to cart", result);
+        if (result.success) {
+          console.log("cart result", result);
 
-        // await addToBadge(cartBadge);
-        const cartProducts = await getCartProducts();
-        // console.log("products",cartProducts.data.length)
-        toast.success("Product is added successfully");
-        navigate("/Cart");
+          // await addToBadge(cartBadge);
+          const cartProducts = await getCartProducts();
+          // console.log("products",cartProducts.data.length)
+          toast.success("Product is added successfully");
+          navigate("/Cart");
+        } else {
+          toast.error("Session is expired please login again");
+          Cookies.remove("accessToken");
+          navigate("/login");
+        }
       } catch (err) {
         toast.error(err);
       }

@@ -8,12 +8,14 @@ import ContinueWithgoogle from "./ContinueWithgoogle";
 import closedEye from "../assests/images/closedeye.png";
 import openEye from "../assests/images/openeye.png";
 import { login } from "../apis/apis";
-import { LoginContext } from "../Context/Login";
+import { ProfileContext } from "../Context/UserProfile";
+import { getProfile, getCartProducts } from "../apis/apis";
+import { CartBadgeContext } from "../Context/CartBadge";
 import Buttons from "./Buttons";
 export default function Login() {
+  const image = useContext(ProfileContext);
   const navigate = useNavigate();
-  const userlogin = useContext(LoginContext);
-  console.log("userlogin", userlogin);
+  const badge = useContext(CartBadgeContext);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -36,11 +38,38 @@ export default function Login() {
         //  console.log("data",data);
         const data = await login(formData.email, formData.password);
         console.log("login data", data);
-        toast.success("Login Successfully");
-        userlogin.setIsLogin(data.data.success);
-        setFormData({ email: "", password: "" });
+        if (data.data.success) {
+          console.log("message", data.data.message);
+          toast.success(data.data.message);
+        } else {
+          toast.error(data.data.message);
+          setFormData({
+            email: "",
+            password: "",
+          });
+          return;
+        }
 
-        // navigate('/home',{ state: { displayName: data?.user?.displayName } })
+        const response = await getProfile();
+        console.log("response", response);
+
+        if (response) {
+          const imageUrl = URL.createObjectURL(response.data);
+
+          image.setImageUrl(imageUrl);
+        } else {
+          image.setImageUrl("");
+        }
+        const result = await getCartProducts();
+        if (result.data.length > 0) {
+          const totalCartItems = result.data.reduce(
+            (acc, currentvalue) => acc + currentvalue.quantity,
+            0
+          );
+          badge.setCartBadge(totalCartItems);
+        }
+
+        setFormData({ email: "", password: "" });
         navigate("/home");
       } catch (error) {
         let message = error.message;

@@ -1,28 +1,36 @@
 const path = require("path");
 const fs = require("fs");
 const User = require("../models/user");
+const getUserByEmail = async (email) => {
+  return await User.findOne({ email });
+};
 const uploadProfile = async (req, res) => {
   const { email } = req.userInfo;
-  const user = await User.findOne({ email: email });
-  user.profile = req.file.path;
-  user.save();
+  const user = await getUserByEmail(email);
+  user.profile = req?.file?.path;
+  await user.save();
   console.log("user", user);
 
-  console.log("file ", req.file);
+  // console.log("file ", req.file);
   try {
     res.json({
       msg: "Profile uploaded successfully",
-      filename: req.file.filename,
+      filepath: req.file.path,
     });
   } catch (err) {}
 };
 const getProfile = async (req, res) => {
-  console.log("req paramas", req.params);
   const { email } = req.userInfo;
-  const user = await User.findOne({ email });
+  console.log("email", email);
+  const user = await getUserByEmail(email);
+  console.log("user", user);
+  console.log("user profile", user.profile);
+  if (!user) {
+    return res.status(404).json({ msg: "user not found" });
+  }
 
-  const profilePath = path.join(__dirname, user.profile);
-  console.log("profilepath", profilePath);
+  const profilePath = path.join(__dirname, "..", user.profile);
+  console.log("profilePath", profilePath);
   try {
     if (fs.existsSync(profilePath)) {
       res.sendFile(profilePath);

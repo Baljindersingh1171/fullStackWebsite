@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-
 import { getCartProducts } from "../apis/apis";
-import Nav from "./Nav";
 import { useNavigate } from "react-router-dom";
 import Quantityprice from "./Quantityprice";
 import { useContext } from "react";
 import { CartBadgeContext } from "../Context/CartBadge";
-import { Button } from "@fluentui/react-components";
+import Cookies from "js-cookie";
 import Buttons from "./Buttons";
-
+import { toast } from "react-toastify";
 export default function Cart() {
   const navigate = useNavigate();
 
@@ -20,22 +18,33 @@ export default function Cart() {
 
   const display = async () => {
     const result = await getCartProducts();
+    // if (result.data.message === "access denied") {
+    //   navigate("/login");
+    // }
     console.log("result in cart", result);
-
-    const totalCartItems = result.data.reduce(
-      (acc, currentvalue) => acc + currentvalue.quantity,
-      0
-    );
-    const SubtotalPrice = result.data.reduce(
-      (acc, currentvalue) => acc + currentvalue.totalprice,
-      0
-    );
-    setSubTotal(SubtotalPrice);
-    console.log("subtotalprice", subTotal);
-    badge.setCartBadge(totalCartItems);
-    console.log("result", result);
-    setCartProducts(result.data);
+    // console.log("result.sucess=>", result.success);
+    // console.log("result.data.success=>", result.data.success);
+    if (!result) {
+      toast.error("Session is expired please login again");
+      Cookies.remove("accessToken");
+      navigate("/login");
+    } else {
+      const totalCartItems = result?.data?.cart.reduce(
+        (acc, currentvalue) => acc + currentvalue.quantity,
+        0
+      );
+      const SubtotalPrice = result?.data?.cart.reduce(
+        (acc, currentvalue) => acc + currentvalue.totalprice,
+        0
+      );
+      setSubTotal(SubtotalPrice);
+      console.log("subtotalprice", subTotal);
+      badge.setCartBadge(totalCartItems ? totalCartItems : 0);
+      console.log("result", result);
+      setCartProducts(result ? result.data.cart : []);
+    }
   };
+
   useEffect(() => {
     display();
   }, []);

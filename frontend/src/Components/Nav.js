@@ -31,15 +31,13 @@ export default function Nav({
   const cartBadge = badge.cartBadge;
   const image = useContext(ProfileContext);
   console.log("image context", image);
-
   console.log("isVisible", isVisible);
   const data = useContext(Filterdatacontext);
   const filteredData = data.filteredData;
   console.log("filtered data", filteredData);
-
   const [allproducts, setAllProducts] = useState([]);
-  const [imageUrl, setImageUrl] = useState("");
   const accessToken = Cookies.get("accessToken");
+  const [loaded, setLoaded] = useState(false);
 
   // console.log("accessToken", accessToken);
 
@@ -62,21 +60,6 @@ export default function Nav({
   useEffect(() => {
     getAllProducts();
   }, []);
-  useEffect(() => {
-    const getimage = async () => {
-      const imageData = await getProfile(image.imageName);
-      // setUserProfile(false);
-      if (imageData) {
-        const Url = URL.createObjectURL(imageData.data);
-        console.log("URL", Url);
-        setImageUrl(Url);
-        console.log("hello");
-      }
-
-      console.log("imageData", imageData);
-    };
-    getimage();
-  }, [image.imageName]);
 
   const getAllProducts = async () => {
     const result = await getProducts();
@@ -87,7 +70,6 @@ export default function Nav({
   const handleClick = async () => {
     try {
       setUserProfile(false);
-
       await logout();
       navigate("/login");
     } catch (err) {}
@@ -203,10 +185,10 @@ export default function Nav({
         </Link>
         {accessToken && (
           <div className="relative ">
-            {image.imageName.length > 0 ? (
+            {image.imageUrl.length > 0 ? (
               <img
-                className="h-[35px] w-[35px] rounded-[100px]"
-                src={imageUrl}
+                className="h-[35px] w-[35px] rounded-[100px] cursor-pointer"
+                src={image.imageUrl}
                 onClick={handleUserClick}
               />
             ) : (

@@ -1,7 +1,7 @@
 import Signup from "./Components/Signup";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Login from "./Components/Login";
 import Home from "./Components/Home";
 import ResetPassword from "./Components/ResetPassword";
@@ -12,11 +12,14 @@ import Cart from "./Components/Cart";
 import Addtocart from "./Components/Addtocart";
 import Nav from "./Components/Nav";
 import { useEffect, useContext } from "react";
-import { getCartProducts } from "./apis/apis";
+import { getCartProducts, getProfile } from "./apis/apis";
+import Cookies from "js-cookie";
 
 import { LoginContext } from "./Context/Login";
 
 import { CartBadgeContext } from "./Context/CartBadge";
+import { ProfileContext } from "./Context/UserProfile";
+import UpdatePassword from "./Components/UpdatePassword";
 
 function App() {
   const mensClothCategory = "men's clothing";
@@ -29,19 +32,38 @@ function App() {
   const [userProfile, setUserProfile] = useState(false);
 
   const userlogin = useContext(LoginContext);
-  if (userlogin.isLogin) {
+  const accessToken = Cookies.get("accessToken");
+
+  const image = useContext(ProfileContext);
+  useEffect(() => {
     const display = async () => {
-      const result = await getCartProducts();
-      if (result.data.length > 0) {
-        const totalCartItems = result.data.reduce(
-          (acc, currentvalue) => acc + currentvalue.quantity,
-          0
-        );
-        badge.setCartBadge(totalCartItems);
+      const response = await getProfile();
+      console.log("response", response);
+      // console.log("success=>", response.data.success);
+
+      if (response) {
+        const imageUrl = URL.createObjectURL(response.data);
+        console.log("imageUrl", imageUrl);
+        image.setImageUrl(imageUrl);
       }
-      display();
     };
-  }
+    display();
+  }, []);
+
+  const display = async () => {
+    const result = await getCartProducts();
+    if (result && result.data.cart.length > 0) {
+      const totalCartItems = result.data.cart.reduce(
+        (acc, currentvalue) => acc + currentvalue.quantity,
+        0
+      );
+      badge.setCartBadge(totalCartItems);
+    }
+  };
+
+  useEffect(() => {
+    accessToken && display();
+  }, []);
 
   const handleClick = () => {
     setIsVisible(false);
@@ -58,6 +80,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
           <Route path="/Addtocart" element={<Addtocart />} />
+          <Route path="/:resetToken" element={<UpdatePassword />} />
 
           <Route
             path="/Mens"
@@ -107,7 +130,6 @@ function App() {
           setUserProfile={setUserProfile}
         />
       </BrowserRouter>
-
       <ToastContainer position="top-center" />
     </div>
   );

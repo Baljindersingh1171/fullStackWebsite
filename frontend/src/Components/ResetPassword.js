@@ -27,13 +27,11 @@ export default function ResetPassword() {
     e.preventDefault();
     if (e.target.name === "back") {
       navigate("/");
-    } else if (formData.email === "" || formData.password === "") {
-      alert("All fields required");
     } else {
       try {
         // await sendPasswordResetEmail(auth, email);'
         await resetPassword(formData);
-        toast.success("Password is reset successfully");
+        toast.success("CHECK YOUR EMAIL");
         // setEmail("");
         navigate("/login");
       } catch (err) {
@@ -54,14 +52,14 @@ export default function ResetPassword() {
           value={formData.email}
           name="email"
         />
-        <input
+        {/* <input
           type="password"
           onChange={handleChange}
           className="inputs"
           placeholder="new password"
           value={formData.password}
           name="password"
-        />
+        /> */}
         <div style={{ display: "flex", gap: "20px" }}>
           <Buttons
             text="RESET"

@@ -12,10 +12,18 @@ const authenticateUser = (req, res, next) => {
   }
   try {
     const decodedToken = jwt.verify(token, process.env.Unique_Key);
+
+    // setInterval(() => {
+    //   console.log(new Date(decodedToken.exp * 1000).toLocaleString());
+    //   console.log(new Date().toLocaleString());
+    // }, 3000);
+
     console.log("decodedtoken", decodedToken);
     req.userInfo = decodedToken;
     next();
   } catch (err) {
+    console.log("error of token expired", err);
+
     return res.status(500).json({
       success: false,
       message: "access denied",

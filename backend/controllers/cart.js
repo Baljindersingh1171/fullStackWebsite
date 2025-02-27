@@ -49,8 +49,13 @@ const addToCart = async (req, res) => {
     }
 
     await cart.save();
-    return res.json({ msg: "Product added to cart successfully", cart });
+    return res.json({
+      msg: "Product added to cart successfully",
+      cart,
+      success: true,
+    });
   } catch (err) {
+    console.log("error message", err.message);
     return res.status(500).json({ error: err.message });
   }
 };
@@ -59,9 +64,16 @@ const getCartProducts = async (req, res) => {
   const userId = req.userInfo.id;
   try {
     const result = await Cart.findOne({ userId });
-    return res.send(result.cartProducts);
+
+    return res.status(200).json({
+      success: true,
+      cart: result.cartProducts,
+    });
   } catch (err) {
-    return res.json({ err });
+    return res.json({
+      success: false,
+      err,
+    });
   }
 };
 

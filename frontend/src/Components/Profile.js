@@ -3,9 +3,10 @@ import { useState, useRef, useContext } from "react";
 import { MdEdit } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { ProfileContext } from "../Context/UserProfile";
+import { toast } from "react-toastify";
 
 function Profile({ setUserProfile }) {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState("");
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const fileInputRef = useRef(null);
@@ -20,40 +21,36 @@ function Profile({ setUserProfile }) {
     }
   };
 
-  const handleUpload = async () => {
-    // e.preventDefault();
+  const handleUpload = async (e) => {
+    e.preventDefault();
 
     if (!selectedFile) {
       // setMessage("Please select a file to upload.");
+      console.log("clicked");
+      toast.error("Please select a file to upload");
       return;
-    }
+    } else {
+      try {
+        setLoading(true);
+        // setMessage("");
+        const formData = new FormData();
+        formData.append("profile", selectedFile);
 
-    try {
-      setLoading(true);
-      // setMessage("");
-      const formData = new FormData();
-      formData.append("profile", selectedFile);
-      console.log("selectedfile", selectedFile);
-      // formData.forEach((value, key) => {
-      //   console.log(`${key}`, value);
-      // });
+        await uploadProfile(formData);
 
-      const result = await uploadProfile(formData);
-      setUserProfile(false);
-      console.log("result after file upload", result.data.filename);
-      // setMessage("File uploaded successfully!");
-      // const getimage = await getProfile(result.data.filename);
+        const response = await getProfile();
+        console.log("response", response);
 
-      // const Url = URL.createObjectURL(getimage.data);
-      // console.log("URL", Url);
-      image.setImageName(result.data.filename);
-      // setImageUrl(Url);
-      // console.log("imageurl", imageUrl);
-      // console.log("getimage", getimage);
-    } catch (error) {
-      // setMessage("Upload failed. Please try again.");
-    } finally {
-      setLoading(false);
+        if (response) {
+          const imageUrl = URL.createObjectURL(response.data);
+          console.log("imageUrl", imageUrl);
+          image.setImageUrl(imageUrl);
+        }
+        setUserProfile(false);
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -85,9 +82,9 @@ function Profile({ setUserProfile }) {
         <button
           disabled={loading}
           onClick={handleUpload}
-          className="bg-blue-400 p-[2px] text-white w-[60px]"
+          className="bg-blue-400 p-[2px] text-white w-[70px] rounded-md"
         >
-          {loading ? "Uploading..." : "Update"}
+          {loading && selectedFile ? "Updating.." : "Update"}
         </button>
       </form>
     </div>

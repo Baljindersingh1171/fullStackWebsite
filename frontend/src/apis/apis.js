@@ -1,5 +1,4 @@
 import axios from "axios";
-// axios.defaults.withCredentials = true;
 export const signup = async (email, confirmpassword) => {
   try {
     const result = await axios.post("/api/user/signup", {
@@ -18,7 +17,8 @@ export const login = async (email, password) => {
     });
     return result;
   } catch (err) {
-    console.log(err);
+    console.log("error", err);
+    return err.response;
   }
 };
 export const logout = async () => {
@@ -93,9 +93,10 @@ export const addToCart = async (
       },
       { withCredentials: true }
     );
-    return response;
+    return response.data;
   } catch (err) {
-    throw err;
+    console.log(err);
+    return err.response.data;
   }
 };
 // export const addToBadge = async (cartBadge) => {
@@ -125,7 +126,11 @@ export const getCartProducts = async () => {
     });
     return response;
   } catch (err) {
-    throw err;
+    console.log("error", err);
+    // return {
+    //   success: false,
+    //   error: err.response?.data,
+    // };
   }
 };
 // export const getCartProducts = async () => {
@@ -138,7 +143,9 @@ export const getCartProducts = async () => {
 // };
 export const deleteCartProduct = async (id) => {
   try {
-    const response = await axios.delete(`/api/user/cart/${id}`);
+    const response = await axios.delete(`/api/user/cart/${id}`, {
+      withCredentials: true,
+    });
     return response;
   } catch (err) {
     throw err;
@@ -168,9 +175,9 @@ export const uploadProfile = async (formData) => {
     return result;
   } catch (err) {}
 };
-export const getProfile = async (profilename) => {
+export const getProfile = async () => {
   try {
-    const response = await axios.get(`/api/user/profile/${profilename}`, {
+    const response = await axios.get(`/api/user/profile`, {
       responseType: "blob",
     });
     console.log("image", response);
@@ -180,5 +187,23 @@ export const getProfile = async (profilename) => {
 export const resetPassword = (formData) => {
   try {
     axios.post(`/api/user/resetpassword`, formData);
+    console.log("reset-password");
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const verifyResetToken = (resetToken) => {
+  console.log(resetToken, "resetiiToken");
+  try {
+    const result = axios.get(`api/user/resetpassword/${resetToken}`);
+    console.log("verify token");
+    return result;
+  } catch (err) {
+    console.log("error", err);
+  }
+};
+export const updateUserPassword = (resetToken, password) => {
+  try {
+    axios.post(`api/user/updateuserpassword/${resetToken}`, { password });
   } catch (err) {}
 };
