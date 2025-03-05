@@ -13,7 +13,7 @@ const validateResetToken = async (req, res, next) => {
       return res.status(400).json({ msg: "Invalid or expired token" });
     }
 
-    req.email = tokenData.email;
+    req.body.email = tokenData.email;
     next();
   } catch (error) {
     return res.status(500).json({ msg: "Server error" });

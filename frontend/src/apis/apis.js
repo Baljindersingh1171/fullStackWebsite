@@ -184,19 +184,21 @@ export const getProfile = async () => {
     return response;
   } catch (err) {}
 };
-export const resetPassword = (formData) => {
+export const resetPassword = async (formData) => {
   try {
-    axios.post(`/api/user/resetpassword`, formData);
-    console.log("reset-password");
+    const result = await axios.post(`/api/user/resetpassword`, formData);
+    console.log("res", result);
+    return result;
   } catch (err) {
     console.log(err);
+    return err.response;
   }
 };
 export const verifyResetToken = (resetToken) => {
   console.log(resetToken, "resetiiToken");
   try {
     const result = axios.get(`api/user/resetpassword/${resetToken}`);
-    console.log("verify token");
+
     return result;
   } catch (err) {
     console.log("error", err);

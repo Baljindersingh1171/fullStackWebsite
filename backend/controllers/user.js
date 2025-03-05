@@ -2,6 +2,7 @@ const User = require("../models/user");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { text } = require("stream/consumers");
 // const { updateUserPassword } = require("../../frontend/src/apis/apis");
 const { Unique_Key, EMAIL_USER, EMAIL_PASS, CLIENT_URL } = process.env;
 
@@ -118,11 +119,11 @@ const resetPassword = async (req, res) => {
       to: user.email,
       subject: "Password Reset Request",
 
-      html: ` <a href="${CLIENT_URL}/${resetToken}">click to reset password</a>`,
+      html: `    <p>Click the link below to reset your password:</p> <a href="${CLIENT_URL}/${resetToken}">${CLIENT_URL}/${resetToken}</a>`,
     };
 
     await transporter.sendMail(mailOptions);
-    res.send("Email is send successfully");
+    res.json({ msg: "Check Your Email" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ msg: "An error occurred, please try again" });
@@ -145,10 +146,18 @@ const resetPassword = async (req, res) => {
   //   return res.status(500).json({ msg: "An occurred please try again " });
   // }
 };
-const update = (req, res) => {
-  const { email } = req.body;
-  console.log("email", email);
-  console.log("resetataoken", req.params);
+const update = async (req, res) => {
+  const { email, password } = req.body;
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  try {
+    const result = await User.updateOne(
+      { email },
+      { $set: { password: hashedPassword } }
+    );
+    console.log("result", result);
+    return res.json({ msg: "updated successfully" });
+  } catch (err) {}
 };
 module.exports = {
   handleGetAllUsers,
