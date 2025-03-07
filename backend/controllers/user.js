@@ -2,7 +2,6 @@ const User = require("../models/user");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { text } = require("stream/consumers");
 // const { updateUserPassword } = require("../../frontend/src/apis/apis");
 const { Unique_Key, EMAIL_USER, EMAIL_PASS, CLIENT_URL } = process.env;
 
@@ -69,8 +68,6 @@ const checkUser = async (req, res) => {
       message: "Logged in successful",
       accessToken,
     });
-
-    // res.cookie("uuid", token);
   } catch (err) {
     console.error(err);
     return res.status(500).send("An error occurred");
@@ -80,10 +77,7 @@ const logout = async (req, res) => {
   res.clearCookie("accessToken");
   return res.send("user logout successfully");
 };
-// async function getUser(req, res) {
-//   const user = await User.findById(req.params.id);
-//   return res.status(200).json({ user });
-// }
+
 const resetPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -100,7 +94,7 @@ const resetPassword = async (req, res) => {
     await ForgotPassword.deleteOne({ email });
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpire = Date.now() + 3600000;
+    const resetTokenExpire = Date.now() + 60000;
 
     await ForgotPassword.create({ email, resetToken, resetTokenExpire });
 
@@ -128,23 +122,6 @@ const resetPassword = async (req, res) => {
     console.error(err);
     return res.status(500).json({ msg: "An error occurred, please try again" });
   }
-
-  // try {
-  //   const user = await User.findOne({ email: email });
-  //   if (user) {
-  //     const resetToken = crypto.randomBytes(30).toString("hex");
-  //     const resetTokenExpiration = Date.now() + Token_Expiration * 1000;
-  //     const salt = await bcrypt.genSalt(saltRounds);
-  //     const hashedPassword = await bcrypt.hash(password, salt);
-  //     user.password = hashedPassword;
-  //     await user.save();
-  //     return res.status(200).json({ msg: "password is reset successfully" });
-  //   } else {
-  //     return res.status(404).json({ msg: "email is not registered" });
-  //   }
-  // } catch (err) {
-  //   return res.status(500).json({ msg: "An occurred please try again " });
-  // }
 };
 const update = async (req, res) => {
   const { email, password } = req.body;
@@ -156,7 +133,7 @@ const update = async (req, res) => {
       { $set: { password: hashedPassword } }
     );
     console.log("result", result);
-    return res.json({ msg: "updated successfully" });
+    return res.json({ msg: "Password Updated Successfully" });
   } catch (err) {}
 };
 module.exports = {

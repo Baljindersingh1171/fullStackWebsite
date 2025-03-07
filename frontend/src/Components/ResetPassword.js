@@ -54,7 +54,7 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex justify-center items-center   w-[400px] mx-auto mt-[200px] bg-gray-200 p-[10px]">
+    <div className="flex justify-center items-center   w-[400px] mx-auto mt-[200px] bg-gray-200 p-[20px]">
       <form className="flex flex-col  justify-center items-center gap-[20px]">
         <h1 className="font-bold text-2xl">Reset Password</h1>
         <input

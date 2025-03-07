@@ -194,18 +194,23 @@ export const resetPassword = async (formData) => {
     return err.response;
   }
 };
-export const verifyResetToken = (resetToken) => {
-  console.log(resetToken, "resetiiToken");
+export const verifyResetToken = async (resetToken) => {
   try {
-    const result = axios.get(`api/user/resetpassword/${resetToken}`);
+    const result = await axios.get(`api/user/resetpassword/${resetToken}`);
+    console.log("result of token verified or not", result);
 
     return result;
   } catch (err) {
-    console.log("error", err);
+    return err.response;
   }
 };
-export const updateUserPassword = (resetToken, password) => {
+export const updateUserPassword = async (resetToken, password) => {
   try {
-    axios.post(`api/user/updateuserpassword/${resetToken}`, { password });
+    const result = await axios.post(
+      `api/user/updateuserpassword/${resetToken}`,
+      { password }
+    );
+
+    return result;
   } catch (err) {}
 };
